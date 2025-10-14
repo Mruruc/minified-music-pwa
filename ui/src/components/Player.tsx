@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX } from 'lucide-react';
 import { useMusic } from '@/context/MusicContext';
-import { formatDuration } from '@/utils/format';
 import { Slider } from '@/components/ui/slider';
+import { formatDuration } from '@/utils/util';
 
 export const Player = () => {
   const {

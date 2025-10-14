@@ -5,12 +5,18 @@ import com.mr.uruc.minify.music.dto.Artist;
 import com.mr.uruc.minify.music.dto.MusicLibrary;
 import com.mr.uruc.minify.music.dto.Playlist;
 import com.mr.uruc.minify.music.dto.Track;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class StaticDB {
+    private static final String baseUrl = ServletUriComponentsBuilder
+            .fromCurrentContextPath()
+            .path("/api/v1/audios/")
+            .toUriString();
+
     private StaticDB() {
     }
 
@@ -19,27 +25,27 @@ public class StaticDB {
     // ---------------------------
     public static final List<Track> TRACKS = List.of(
             new Track("1", "Cosmic Highway", "1", "1", 245_000,
-                    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", true,
+                    baseUrl + "SoundHelix-Song-1.mp3", true,
                     "The Midnight Collective", "Midnight Echoes",
                     "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800&h=800&fit=crop", List.of("1", "3")),
 
             new Track("2", "Electric Dreams", "1", "1", 198_000,
-                    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", true,
+                    baseUrl + "SoundHelix-Song-2.mp3", true,
                     "The Midnight Collective", "Midnight Echoes",
                     "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800&h=800&fit=crop", List.of("2", "3")),
 
             new Track("3", "Moonlight Serenade", "2", "2", 223_000,
-                    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3", false,
+                    baseUrl + "SoundHelix-Song-3.mp3", false,
                     "Luna Rivers", "Starlight Sessions",
                     "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&h=800&fit=crop", List.of("1")),
 
             new Track("4", "Neon Nights", "3", "3", 267_000,
-                    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3", true,
+                    baseUrl + "SoundHelix-Song-4.mp3", true,
                     "Neon Dreams", "Retrowave Paradise",
                     "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800&h=800&fit=crop", List.of("2")),
 
             new Track("5", "Sunset Boulevard", "3", "3", 234_000,
-                    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3", false,
+                    baseUrl + "SoundHelix-Song-5.mp3", false,
                     "Neon Dreams", "Retrowave Paradise",
                     "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800&h=800&fit=crop", List.of("1", "3"))
     );
@@ -72,21 +78,21 @@ public class StaticDB {
                     "Electronic music pioneers blending synthwave with modern production.",
                     "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=800&fit=crop",
                     1_234_567,
-                    filterAlbumsByArtist("1"), null ),
+                    filterAlbumsByArtist("1"), null),
 //                    filterTracksByArtist("1")),
 
             new Artist("2", "Luna Rivers",
                     "Indie pop artist with a soulful voice and introspective lyrics.",
                     "https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=800&h=800&fit=crop",
                     892_345,
-                    filterAlbumsByArtist("2"), null ),
+                    filterAlbumsByArtist("2"), null),
 //                    filterTracksByArtist("2")),
 
             new Artist("3", "Neon Dreams",
                     "Synthwave duo creating nostalgic 80s inspired soundscapes.",
                     "https://images.unsplash.com/photo-1571330735066-03aaa9429d89?w=800&h=800&fit=crop",
                     2_456_789,
-                    filterAlbumsByArtist("3"), null )
+                    filterAlbumsByArtist("3"), null)
 //                    filterTracksByArtist("3"))
     );
 

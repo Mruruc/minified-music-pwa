@@ -1,6 +1,6 @@
 import { useMusic } from "@/context/MusicContext";
 import { Track } from "@/types";
-import { formatDuration } from "@/utils/format";
+import { formatDuration } from "@/utils/util";
 import { Pause, Play } from "lucide-react";
 
 interface TrackCardProps {

@@ -2,10 +2,12 @@ import ItemNotFound from "@/components/common/ItemNotFound";
 import { TrackCard } from "@/components/TrackCard";
 import { useMusic } from "@/context/MusicContext";
 import { Album } from "@/types";
-import { formatDuration } from "@/utils/format";
+import { formatDuration } from "@/utils/util";
 import { Play } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
+
+const BASE_URI = import.meta.env.VITE_API_BASE_URL;
 
 const AlbumPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -15,9 +17,8 @@ const AlbumPage = () => {
 
   useEffect(() => {
     const getAlbum = async () => {
-      const response = await fetch(`http://localhost:8081/api/v1/albums/${id}`);
+      const response = await fetch(`${BASE_URI}/albums/${id}`);
       const data = await response.json();
-      console.log(data);
       setAlbum(data);
     };
     getAlbum();
@@ -65,7 +66,9 @@ const AlbumPage = () => {
       {/* Play Button */}
       <section className="px-8 py-8">
         <button
-          onClick={() => album.tracks.length > 0 && playTrack(album.tracks[0],album.tracks)}
+          onClick={() =>
+            album.tracks.length > 0 && playTrack(album.tracks[0], album.tracks)
+          }
           className="w-14 h-14 bg-accent rounded-full flex items-center justify-center hover:scale-105 transition-transform shadow-lg">
           <Play className="w-6 h-6 fill-current ml-1" />
         </button>

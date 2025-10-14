@@ -141,7 +141,7 @@ async function cacheAudioTrack(trackUrl) {
 
     await cache.put(trackUrl, response.clone());
 
-    await trimTrackCache(cache);
+    await trimCache(cache);
     console.log("[SW] Cached last played track:", trackUrl);
   } catch (err) {
     console.warn("[SW] Failed to cache track:", err);
@@ -183,38 +183,46 @@ function openDB() {
  * Save and limit to the 10 most recent tracks
  */
 async function saveMetadataToDB(tracks) {
-  const db = await openDB();
-  const tx = db.transaction(STORE_NAME, "readwrite");
-  const store = tx.objectStore(STORE_NAME);
+  try {
+    const db = await openDB();
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    const store = tx.objectStore(STORE_NAME);
 
-  // STEP 1: Save all incoming tracks (these are most recent)
-  for (const track of tracks) {
-    // Attach timestamp if not provided
-    const enriched = { ...track, playedAt: track.playedAt || Date.now() };
-    store.put(enriched);
+    // STEP 1: Save all incoming tracks (these are most recent)
+    for (const track of tracks) {
+      // Attach timestamp if not provided
+      const enriched = { ...track, playedAt: track.playedAt || Date.now() };
+      store.put(enriched);
+    }
+
+    // STEP 2: After saving, trim to 10 most recent
+    const allTracks = await new Promise((resolve, reject) => {
+      const req = store.getAll();
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+
+    // Sort by most recent first
+    allTracks.sort((a, b) => b.playedAt - a.playedAt);
+
+    // Keep top 10
+    const toKeep = allTracks.slice(0, MAX_CACHED_TRACKS);
+    const toDelete = allTracks.slice(MAX_CACHED_TRACKS);
+
+    // Delete older tracks
+    for (const track of toDelete) {
+      store.delete(track.id);
+    }
+
+    await new Promise((resolve, reject) => {
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+
+    db.close();
+
+    console.log(`[SW] IndexedDB trimmed to ${toKeep.length} recent tracks`);
+  } catch (err) {
+    console.error("[SW] Failed to save metadata:", err);
   }
-
-  // STEP 2: After saving, trim to 10 most recent
-  const allTracks = await new Promise((resolve, reject) => {
-    const req = store.getAll();
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
-  });
-
-  // Sort by most recent first
-  allTracks.sort((a, b) => b.playedAt - a.playedAt);
-
-  // Keep top 10
-  const toKeep = allTracks.slice(0, MAX_METADATA);
-  const toDelete = allTracks.slice(MAX_METADATA);
-
-  // Delete older tracks
-  for (const track of toDelete) {
-    store.delete(track.id);
-  }
-
-  await tx.done?.catch(() => {});
-  db.close();
-
-  console.log(`[SW] IndexedDB trimmed to ${toKeep.length} recent tracks`);
 }

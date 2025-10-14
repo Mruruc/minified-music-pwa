@@ -1,7 +1,7 @@
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
-import { MusicProvider } from "@/context/MusicContext";
 import { RouterProvider } from "react-router";
+import { MusicProvider } from "./context/MusicProvider";
 import router from "./routes/app-routes";
 
 const App = () => (

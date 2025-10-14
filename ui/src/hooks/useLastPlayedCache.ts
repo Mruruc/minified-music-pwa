@@ -1,20 +1,10 @@
-import { getAllTracks } from "@/lib/utils";
 import { Track } from "@/types";
+import { getAllTracks, postToServiceWorker } from "@/utils/util";
 import { useCallback, useEffect, useState } from "react";
 
 const SYNC_TRACK = "SYNC_LAST_PLAYED";
 
-function postToServiceWorker(payload: any) {
-  if (navigator.serviceWorker?.controller) {
-    navigator.serviceWorker.controller.postMessage(payload);
-    return true;
-  }
-  return false;
-}
 
-/**
- * Sends a message to the service worker to cache the last played track.
- */
 export const useLastPlayedCache = () => {
   const [currentTrack, setCurrentTrack] = useState<Track | null>();
   const [offlineQueue, setOfflineQueue] = useState<Track[]>([]);
@@ -39,33 +29,36 @@ export const useLastPlayedCache = () => {
     }
   }, [currentTrack, cacheTrack]);
 
-  // listen onoffline and beforeunload sync tracks metaData to indexDB
+  // listen onoffline and beforeunload sync tracks metaData to indexDB via posting message to service worker
   useEffect(() => {
-    const onOffline = () => {
+    const saveQueueToServiceWorker = () => {
+      if (offlineQueue.length === 0) {
+        return;
+      }
       const snapshot = offlineQueue.slice();
       postToServiceWorker({
         type: SYNC_TRACK,
         tracks: snapshot,
-        reason: "offline",
-      });
-    };
-    const onUnload = () => {
-      const snapshot = offlineQueue.slice();
-      postToServiceWorker({
-        type: SYNC_TRACK,
-        tracks: snapshot,
-        reason: "unload",
+        reason: "background_sync",
       });
     };
 
-    window.addEventListener("offline", onOffline);
-    window.addEventListener("beforeunload", onUnload);
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        saveQueueToServiceWorker();
+      }
+    };
+
+    window.addEventListener("offline", saveQueueToServiceWorker);
+    window.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("pagehide", saveQueueToServiceWorker);
 
     return () => {
-      window.removeEventListener("offline", onOffline);
-      window.removeEventListener("beforeunload", onUnload);
+      window.removeEventListener("offline", saveQueueToServiceWorker);
+      window.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("pagehide", saveQueueToServiceWorker);
     };
-  }, []);
+  }, [offlineQueue]);
 
   // hydrate queue from indexDB and setOfflineQueue
   useEffect(() => {

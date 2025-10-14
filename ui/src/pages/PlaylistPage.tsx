@@ -2,10 +2,12 @@ import ItemNotFound from "@/components/common/ItemNotFound";
 import { TrackCard } from "@/components/TrackCard";
 import { useMusic } from "@/context/MusicContext";
 import { Playlist } from "@/types";
-import { formatDuration } from "@/utils/format";
+import { formatDuration } from "@/utils/util";
 import { Play } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
+
+const BASE_URI = import.meta.env.VITE_API_BASE_URL;
 
 const PlaylistPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -15,11 +17,8 @@ const PlaylistPage = () => {
   useEffect(() => {
     const getPlaylist = async () => {
       console.log("Fetching playlist for id: ", id);
-      const response = await fetch(
-        `http://localhost:8081/api/v1/playlists/${id}`
-      );
+      const response = await fetch(`${BASE_URI}/playlists/${id}`);
       const data = await response.json();
-      console.log(data);
       setPlaylist(data);
     };
     getPlaylist();
@@ -65,7 +64,8 @@ const PlaylistPage = () => {
       <section className="px-8 py-8">
         <button
           onClick={() =>
-            playlistTracks.length > 0 && playTrack(playlistTracks[0],playlistTracks)
+            playlistTracks.length > 0 &&
+            playTrack(playlistTracks[0], playlistTracks)
           }
           className="w-14 h-14 bg-accent rounded-full flex items-center justify-center hover:scale-105 transition-transform shadow-lg">
           <Play className="w-6 h-6 fill-current ml-1" />

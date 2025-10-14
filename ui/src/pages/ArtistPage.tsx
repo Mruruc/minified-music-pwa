@@ -3,10 +3,12 @@ import ItemNotFound from "@/components/common/ItemNotFound";
 import { TrackCard } from "@/components/TrackCard";
 import { useMusic } from "@/context/MusicContext";
 import { Artist } from "@/types";
-import { formatNumber } from "@/utils/format";
+import { formatNumber } from "@/utils/util";
 import { Play } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
+
+const BASE_URI = import.meta.env.VITE_API_BASE_URL;
 
 const ArtistPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -20,10 +22,9 @@ const ArtistPage = () => {
   useEffect(() => {
     const getArtist = async () => {
       const response = await fetch(
-        `http://localhost:8081/api/v1/artists/${id}`
+        `${BASE_URI}/artists/${id}`
       );
       const data = await response.json();
-      console.log(data);
       setArtist(data);
     };
     getArtist();

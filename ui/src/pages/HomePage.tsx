@@ -6,6 +6,8 @@ import { useMusic } from "@/context/MusicContext";
 import { MusicLibrary } from "@/types";
 import { useEffect, useState } from "react";
 
+const BASE_URI = import.meta.env.VITE_API_BASE_URL;
+
 const HomePage = () => {
   const { offlineQueue } = useMusic();
 
@@ -17,7 +19,7 @@ const HomePage = () => {
 
   useEffect(() => {
     const getLib = async () => {
-      const response = await fetch("http://localhost:8081/api/v1/library");
+      const response = await fetch(`${BASE_URI}/library`);
       const data = await response.json();
       setLib(data);
     };
