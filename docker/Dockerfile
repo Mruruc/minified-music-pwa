@@ -18,6 +18,8 @@ RUN chmod +x gradlew
 # Copy the rest of the service sources
 COPY ${SERVICE_DIR}/ ./
 
+RUN chmod +x gradlew
+
 # Build the Spring Boot fat jar (skip tests here; CI can run tests separately)
 # Use BuildKit cache for Gradle (fast subsequent builds)
 RUN --mount=type=cache,target=/root/.gradle \
