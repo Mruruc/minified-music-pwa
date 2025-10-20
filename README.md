@@ -2,6 +2,15 @@
 
 A modern, scalable music streaming application built with React 19, TypeScript, and Vite.
 
+## PWA Features & APIs
+- Installation 
+- Offline Support
+- Storage
+- Service Worker
+- Cache Storage
+- IndexDB
+- Media Session API
+
 ## 🎵 Features
 
 - **Music Streaming**: Play tracks with a fully functional audio player
