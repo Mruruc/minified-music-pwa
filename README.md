@@ -10,11 +10,7 @@ A modern, scalable music streaming application built with React 19, TypeScript, 
 - Cache Storage
 - IndexDB
 - Media Session API
-
-<<<<<<< HEAD
-=======
-
->>>>>>> 9d6a1086603be28c9ef4cff573639dcfcc41035b
+----
 ## 🎵 Features
 
 - **Music Streaming**: Play tracks with a fully functional audio player
