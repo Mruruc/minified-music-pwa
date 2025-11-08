@@ -50,12 +50,6 @@ export interface Playlist {
   totalDurationMs?: number;
 }
 
-// export interface PlaylistTrack {
-//   playlistId: string;
-//   trackId: string;
-//   position: number;
-// }
-
 export interface MusicLibrary {
   artists: Artist[];
   albums: Album[];

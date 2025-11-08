@@ -46,7 +46,7 @@ export const useMediaSession = ({
     }));
   }, []);
 
-  // Update metadata when track changes
+  
   useEffect(() => {
     if (!isMediaSessionSupported || !currentTrack) return;
 
